@@ -9,18 +9,14 @@ from aiogram.enums import ParseMode
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
 from config import BOT_TOKEN, WEB_SERVER_HOST, WEB_SERVER_PORT, WEBHOOK_PATH
-from database.engine import dispose_engine, init_engine
+from database.storage import storage
 from handlers import router
 
 logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
 
 async def on_startup() -> None:
-    await init_engine()
-
-
-async def on_shutdown() -> None:
-    await dispose_engine()
+    await storage.init()
 
 
 def main() -> None:
@@ -28,7 +24,6 @@ def main() -> None:
     dp.include_router(router)
 
     dp.startup.register(on_startup)
-    dp.shutdown.register(on_shutdown)
 
     bot = Bot(
         token=BOT_TOKEN,

@@ -3,6 +3,9 @@
 .env.local
 .env.*.local
 
+# JSON storage
+data/
+
 # Python
 __pycache__/
 *.py[cod]

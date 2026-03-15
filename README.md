@@ -2,10 +2,11 @@
 
 Бот для продажи звёзд. Пользователь вводит число в чат — бот списывает это количество звёзд. Если не хватает — сообщение «Недостаточно звёзд».
 
+Данные хранятся в JSON-файле `data/users.json`.
+
 ## Требования
 
 - Python 3.11+
-- PostgreSQL
 
 ## Docker
 
@@ -16,7 +17,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Миграции выполняются автоматически при старте контейнера. PostgreSQL поднимается в том же compose. Порт 8080 — бот, 5432 — PostgreSQL.
+Данные сохраняются в volume `bot_data`. Порт 8080 — бот.
 
 ## Установка (без Docker)
 
@@ -31,15 +32,8 @@ pip install -r requirements.txt
 1. Скопируйте `.env.example` в `.env`
 2. Заполните переменные:
    - `BOT_TOKEN` — токен от @BotFather
-   - `DATABASE_URL` — строка подключения к PostgreSQL (формат: `postgresql+asyncpg://user:pass@host:port/dbname`)
    - `ADMIN_USERNAME` — username админа для кнопки «Связь с админом»
    - `ADMIN_IDS` — ID админов через запятую (например: `123456789,987654321`)
-
-## Миграции
-
-```bash
-alembic upgrade head
-```
 
 ## Запуск
 
@@ -66,9 +60,18 @@ ngrok http 8080
 # Используйте выданный HTTPS-URL: https://xxxx.ngrok.io/webhook
 ```
 
+## Render.com
+
+1. Создай **Web Service** (Docker).
+2. В Environment добавь: `BOT_TOKEN`, `ADMIN_USERNAME`, `ADMIN_IDS`, `WEB_SERVER_HOST=0.0.0.0`, `WEB_SERVER_PORT=8080`
+3. Добавь **Disk** (persistent storage) и примонтируй к `/app/data` — там будет `users.json`
+4. Webhook: `https://<your-service>.onrender.com/webhook`
+
+**Важно:** без Disk данные теряются при перезапуске.
+
 ## Функционал
 
 - `/start` — приветствие и кнопка «Связь с админом»
 - Ввод числа — списание звёзд (при успехе: «Списано X звёзд», при нехватке: «Недостаточно звёзд»)
 
-Баланс пользователей по умолчанию 0. Пополнение — вручную через БД или будущие админ-команды.
+Баланс пользователей по умолчанию 0. Пополнение — редактирование `data/users.json` или будущие админ-команды.

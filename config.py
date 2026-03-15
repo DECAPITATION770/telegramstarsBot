@@ -6,10 +6,6 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
 BOT_TOKEN: str = os.getenv("BOT_TOKEN", "")
-DATABASE_URL: str = os.getenv(
-    "DATABASE_URL",
-    "postgresql+asyncpg://user:pass@localhost:5432/tgstars",
-)
 ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "")
 ADMIN_IDS: set[int] = set()
 WEB_SERVER_HOST: str = os.getenv("WEB_SERVER_HOST", "127.0.0.1")
@@ -26,5 +22,3 @@ if _raw_admin_ids:
 
 def is_admin(user_id: int) -> bool:
     return user_id in ADMIN_IDS
-
-

@@ -3,7 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from config import ADMIN_USERNAME
-from database.repositories import get_or_create_user
+from database.storage import storage
 
 router = Router()
 
@@ -26,11 +26,11 @@ def get_admin_keyboard() -> InlineKeyboardMarkup | None:
 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message, session) -> None:
+async def cmd_start(message: Message) -> None:
     if not message.from_user:
         return
     user_id = message.from_user.id
-    await get_or_create_user(session, user_id)
+    await storage.get_or_create_user(user_id)
     keyboard = get_admin_keyboard()
     await message.answer(
         START_TEXT,

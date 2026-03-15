@@ -1,28 +1,8 @@
 services:
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: tgstars
-      POSTGRES_PASSWORD: tgstars
-      POSTGRES_DB: tgstars
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tgstars -d tgstars"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   bot:
     build: .
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
       BOT_TOKEN: ${BOT_TOKEN}
-      DATABASE_URL: postgresql+asyncpg://tgstars:tgstars@db:5432/tgstars
       ADMIN_USERNAME: ${ADMIN_USERNAME:-}
       ADMIN_IDS: ${ADMIN_IDS:-}
       WEB_SERVER_HOST: 0.0.0.0
@@ -30,6 +10,8 @@ services:
       WEBHOOK_PATH: /webhook
     ports:
       - "8080:8080"
+    volumes:
+      - bot_data:/app/data
 
 volumes:
-  postgres_data:
+  bot_data:
