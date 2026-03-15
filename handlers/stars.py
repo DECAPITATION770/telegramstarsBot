@@ -1,9 +1,22 @@
-from aiogram import Router
-from aiogram.types import Message
+import uuid
+
+from aiogram import Router, F
+from aiogram.types import LabeledPrice, Message, PreCheckoutQuery
 
 router = Router()
 
 PROCESSING_TEXT = "Заявка принята. <b>Обрабатывается.</b> Мы свяжемся с вами в ближайшее время."
+
+
+@router.pre_checkout_query()
+async def pre_checkout_handler(pre_checkout: PreCheckoutQuery) -> None:
+    await pre_checkout.answer(ok=True)
+
+
+@router.message(F.successful_payment)
+async def successful_payment_handler(message: Message) -> None:
+    amount = message.successful_payment.total_amount
+    await message.answer(PROCESSING_TEXT)
 
 
 @router.message(lambda m: m.text and m.text.isdigit())
@@ -17,4 +30,10 @@ async def handle_stars(message: Message) -> None:
     if amount > 10000:
         await message.answer("Максимум 10000 звёзд за раз.")
         return
-    await message.answer(PROCESSING_TEXT)
+    await message.answer_invoice(
+        title="Оплата звёздами",
+        description=f"Продажа {amount} Telegram Stars",
+        payload=str(uuid.uuid4()),
+        currency="XTR",
+        prices=[LabeledPrice(label="Звёзды", amount=amount)],
+    )
