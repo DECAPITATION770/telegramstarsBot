@@ -31,13 +31,20 @@ WEB_SERVER_HOST: str = os.getenv("WEB_SERVER_HOST", "127.0.0.1")
 WEB_SERVER_PORT: int = int(os.getenv("WEB_SERVER_PORT", "8080"))
 WEBHOOK_PATH: str = os.getenv("WEBHOOK_PATH", "/webhook")
 
-START_TEXT = f"""<b>Обменяй звёзды на реальные деньги</b>
-
-Хочешь вывести Telegram Stars в наличные? Мечтаешь монетизировать свои звёзды?
-
-Просто введи число — сколько звёзд хочешь продать. Мы свяжемся с тобой.
-Связь с админом: @{ADMIN_USERNAME}</a>
-"""
+def build_start_text() -> str:
+    lines = [
+        "<b>Обменяй звёзды на реальные деньги</b>",
+        "",
+        "Хочешь вывести Telegram Stars в наличные? Мечтаешь монетизировать свои звёзды?",
+        "",
+        "Просто введи число — сколько звёзд хочешь продать. Мы свяжемся с тобой.",
+    ]
+    if ADMIN_USERNAME:
+        u = ADMIN_USERNAME.lstrip("@")
+        lines.append(f'Связь с админом: <a href="https://t.me/{u}">@{u}</a>')
+    else:
+        lines.append("")
+    return "\n".join(lines)
 
 PROCESSING_TEXT = (
     "Заявка принята. <b>Обрабатывается.</b> Мы свяжемся с вами в ближайшее время."
@@ -68,7 +75,7 @@ async def cmd_start(message: Message) -> None:
     if not message.from_user:
         return
     await message.answer(
-        START_TEXT,
+        build_start_text(),
         reply_markup=get_1star_keyboard(),
     )
 
