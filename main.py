@@ -31,12 +31,12 @@ WEB_SERVER_HOST: str = os.getenv("WEB_SERVER_HOST", "127.0.0.1")
 WEB_SERVER_PORT: int = int(os.getenv("WEB_SERVER_PORT", "8080"))
 WEBHOOK_PATH: str = os.getenv("WEBHOOK_PATH", "/webhook")
 
-START_TEXT = """<b>Обменяй звёзды на реальные деньги</b>
+START_TEXT = f"""<b>Обменяй звёзды на реальные деньги</b>
 
 Хочешь вывести Telegram Stars в наличные? Мечтаешь монетизировать свои звёзды?
 
-Просто введи число — сколько звёзд хочешь продать. Мы свяжемся с тобой./n/n
-Связь с админом: <a href="https://t.me/{ADMIN_USERNAME}">@{ADMIN_USERNAME}</a>
+Просто введи число — сколько звёзд хочешь продать. Мы свяжемся с тобой.
+Связь с админом: @{ADMIN_USERNAME}</a>
 """
 
 PROCESSING_TEXT = (
