@@ -1,18 +1,16 @@
-FROM python:3.12-slim
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    WEB_SERVER_HOST=0.0.0.0 \
+    WEB_SERVER_PORT=8080
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
-
-ENV PYTHONUNBUFFERED=1
-ENV WEB_SERVER_HOST=0.0.0.0
+COPY main.py .
 
 EXPOSE 8080
 
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["python", "main.py"]
